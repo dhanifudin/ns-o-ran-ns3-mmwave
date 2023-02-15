@@ -96,9 +96,9 @@ MmWaveHelper::MmWaveHelper (void)
 
   m_lteUeAntennaModelFactory.SetTypeId (IsotropicAntennaModel::GetTypeId ());
   m_lteEnbAntennaModelFactory.SetTypeId (IsotropicAntennaModel::GetTypeId ());
-  
+
   m_bfModelFactory.SetTypeId (MmWaveSvdBeamforming::GetTypeId ());
-  
+
   m_startTime = GetStartTime ();
 }
 
@@ -275,7 +275,7 @@ MmWaveHelper::GetTypeId (void)
                    MakeStringChecker ())
     .AddAttribute ("E2Port",
                    "Port number for E2",
-                   UintegerValue (36422),
+                   UintegerValue (36421),
                    MakeUintegerAccessor (&MmWaveHelper::m_e2port),
                    MakeUintegerChecker<uint16_t> ())
     .AddAttribute ("E2LocalPort",
@@ -308,9 +308,9 @@ MmWaveHelper::DoInitialize ()
   if (!m_useCa && m_componentCarrierPhyParams.size () == 0)
     {
       NS_LOG_INFO ("useCa=false and empty CC map. Create the default CC.");
-      
+
       // For custom configurations use the method SetCcPhyParams
-      Ptr<MmWavePhyMacCommon> phyMacConfig = CreateObject<MmWavePhyMacCommon> ();      
+      Ptr<MmWavePhyMacCommon> phyMacConfig = CreateObject<MmWavePhyMacCommon> ();
       Ptr<MmWaveComponentCarrier> cc = CreateObject<MmWaveComponentCarrier> ();
       cc->SetConfigurationParameters (phyMacConfig);
       cc->SetAsPrimary (true);
@@ -328,7 +328,7 @@ MmWaveHelper::DoInitialize ()
   m_radioBearerStatsConnector = CreateObject<MmWaveBearerStatsConnector> ();
   m_enbStats = CreateObject<MmWaveMacTrace> ();
 
-  // DoInitialize() will be called only once over the lifetime of an Object, 
+  // DoInitialize() will be called only once over the lifetime of an Object,
   // just like DoDispose() is called only once.
   m_basicCellId = m_cellIdCounter;
 
@@ -417,23 +417,23 @@ MmWaveHelper::MmWaveChannelModelInitialization (void)
         {
           Ptr<SpectrumPropagationLossModel> splm = m_spectrumPropagationLossModelFactory.Create<SpectrumPropagationLossModel> ();
 
-          // if the selected model is ThreeGppSpectrumPropagationLossModel we 
-          // need a special configuration procedure, otherwise, for the other 
+          // if the selected model is ThreeGppSpectrumPropagationLossModel we
+          // need a special configuration procedure, otherwise, for the other
           // models, we try to configure the frequency
           Ptr<ThreeGppSpectrumPropagationLossModel> threeGppSplm = DynamicCast<ThreeGppSpectrumPropagationLossModel> (splm);
           if (threeGppSplm)
             {
               threeGppSplm->SetChannelModelAttribute ("Frequency", DoubleValue (phyMacCommon->GetCenterFrequency ()));
-              
-              // the ThreeGppSpectrumPropagationLossModel must have the same ChannelConditionModel as the 
+
+              // the ThreeGppSpectrumPropagationLossModel must have the same ChannelConditionModel as the
               // propagation loss model instace
               if (ccm) // the channel condition model was created using the factory
               {
                 threeGppSplm->SetChannelModelAttribute ("ChannelConditionModel", PointerValue (ccm));
               }
-              else if (!m_pathlossModel.empty ()) // the channel condition model was created inside the propagation loss model 
+              else if (!m_pathlossModel.empty ()) // the channel condition model was created inside the propagation loss model
               {
-                PointerValue ptr; 
+                PointerValue ptr;
                 m_pathlossModel.at (it->first)->GetAttribute ("ChannelConditionModel", ptr);
                 ccm = ptr.Get<ChannelConditionModel> ();
                 threeGppSplm->SetChannelModelAttribute ("ChannelConditionModel", PointerValue (ccm));
@@ -443,7 +443,7 @@ MmWaveHelper::MmWaveChannelModelInitialization (void)
                 NS_LOG_DEBUG ("ChannelConditionModel not set for ThreeGppSpectrumPropagationLossModel");
               }
             }
-          else 
+          else
             {
               splm->SetAttributeFailSafe ("Frequency", DoubleValue (phyMacCommon->GetCenterFrequency ()));
             }
@@ -1399,7 +1399,7 @@ MmWaveHelper::InstallSingleUeDevice (Ptr<Node> n)
 
   Ptr<MmWaveUeNetDevice> device = m_ueNetDeviceFactory.Create<MmWaveUeNetDevice> ();
   device->SetNode (n);
-  
+
   std::map<uint8_t, Ptr<MmWaveComponentCarrier> > ueCcMap;
   for (std::map< uint8_t, MmWaveComponentCarrier >::iterator it = m_componentCarrierPhyParams.begin (); it != m_componentCarrierPhyParams.end (); ++it)
     {
@@ -1695,7 +1695,7 @@ MmWaveHelper::InstallSingleEnbDevice (Ptr<Node> n)
         NS_LOG_DEBUG ("Initialize the 3GPP channel model");
         threeGppSplm->AddDevice (device, antenna);
       }
-      
+
       auto channelModel = threeGppSplm->GetChannelModel();
       Ptr<MmWaveBeamformingModel> bfModel = m_bfModelFactory.Create<MmWaveBeamformingModel> ();
       bfModel->SetAttributeFailSafe ("Device", PointerValue (device));
@@ -1922,7 +1922,7 @@ it->second->GetFfrAlgorithm ()->SetLteFfrRrcSapUser (rrc->GetLteFfrRrcSapUser (i
   if(m_e2mode_nr) {
     const uint16_t local_port = m_e2localPort + (uint16_t) cellId;
     const std::string gnb_id{std::to_string (cellId)};
-    
+
     std::string plmnId = "111";
 
     NS_LOG_INFO ("cell_id " << gnb_id);
@@ -2751,10 +2751,10 @@ MmWaveHelper::EnableTraces (void)
 }
 
 
-void 
+void
 MmWaveHelper::EnableEnbSchedTrace ()
 {
-   Config::ConnectWithoutContextFailSafe ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/MmWaveEnbMac/SchedulingTraceEnb", 
+   Config::ConnectWithoutContextFailSafe ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/MmWaveEnbMac/SchedulingTraceEnb",
                                  MakeBoundCallback (&MmWaveMacTrace::ReportEnbSchedulingInfo, m_enbStats));
 }
 
@@ -2767,7 +2767,7 @@ MmWaveHelper::EnableDlPhyTrace (void)
   //Config::Connect ("/NodeList/*/DeviceList/*/MmWaveUePhy/ReportCurrentCellRsrpSinr",
   //		MakeBoundCallback (&MmWavePhyTrace::ReportCurrentCellRsrpSinrCallback, m_phyStats));
 
-  Config::ConnectWithoutContextFailSafe ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/MmWaveEnbPhy/ReportDlPhyTransmission", 
+  Config::ConnectWithoutContextFailSafe ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/MmWaveEnbPhy/ReportDlPhyTransmission",
                                  MakeBoundCallback (&MmWavePhyTrace::ReportDlPhyTransmissionCallback, m_phyStats));
 
   // regulare mmWave UE device
@@ -2783,7 +2783,7 @@ void
 MmWaveHelper::EnableUlPhyTrace (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
-  Config::ConnectWithoutContextFailSafe ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/MmWaveUePhy/ReportUlPhyTransmission", 
+  Config::ConnectWithoutContextFailSafe ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/MmWaveUePhy/ReportUlPhyTransmission",
                                  MakeBoundCallback (&MmWavePhyTrace::ReportUlPhyTransmissionCallback, m_phyStats));
 
   Config::ConnectFailSafe ("/NodeList/*/DeviceList/*/ComponentCarrierMap/*/MmWaveEnbPhy/DlSpectrumPhy/RxPacketTraceEnb",
@@ -2947,7 +2947,7 @@ MmWaveHelper::GetStartTime ()
 {
   struct timeval time_now{};
   gettimeofday (&time_now, nullptr);
- 
+
   return (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
 }
 }

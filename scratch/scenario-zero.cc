@@ -34,7 +34,7 @@ using namespace mmwave;
 
 /**
  * Scenario Zero
- * 
+ *
  */
 
 NS_LOG_COMPONENT_DEFINE ("ScenarioZero");
@@ -188,7 +188,7 @@ static ns3::GlobalValue
                     ns3::StringValue ("DynamicTtt"), ns3::MakeStringChecker ());
 
 static ns3::GlobalValue g_e2TermIp ("e2TermIp", "The IP address of the RIC E2 termination",
-                                    ns3::StringValue ("10.0.2.10"), ns3::MakeStringChecker ());
+                                    ns3::StringValue ("onos-e2t"), ns3::MakeStringChecker ());
 
 static ns3::GlobalValue
     g_enableE2FileLogging ("enableE2FileLogging",
