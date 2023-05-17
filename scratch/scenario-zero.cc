@@ -154,8 +154,9 @@ static ns3::GlobalValue g_e2cuUp ("e2cuUp", "If true, send CU-UP reports", ns3::
 static ns3::GlobalValue g_e2cuCp ("e2cuCp", "If true, send CU-CP reports", ns3::BooleanValue (true),
                                   ns3::MakeBooleanChecker ());
 
-static ns3::GlobalValue g_reducedPmValues ("reducedPmValues", "If true, use a subset of the the pm containers",
-                                        ns3::BooleanValue (true), ns3::MakeBooleanChecker ());
+static ns3::GlobalValue g_reducedPmValues ("reducedPmValues",
+                                           "If true, use a subset of the the pm containers",
+                                           ns3::BooleanValue (true), ns3::MakeBooleanChecker ());
 
 static ns3::GlobalValue
     g_hoSinrDifference ("hoSinrDifference",
@@ -170,10 +171,10 @@ static ns3::GlobalValue
 static ns3::GlobalValue g_simTime ("simTime", "Simulation time in seconds", ns3::DoubleValue (2),
                                    ns3::MakeDoubleChecker<double> (0.1, 100.0));
 
-static ns3::GlobalValue g_outageThreshold ("outageThreshold",
-                                           "SNR threshold for outage events [dB]", // use -1000.0 with NoAuto
-                                           ns3::DoubleValue (-5.0),
-                                           ns3::MakeDoubleChecker<double> ());
+static ns3::GlobalValue
+    g_outageThreshold ("outageThreshold",
+                       "SNR threshold for outage events [dB]", // use -1000.0 with NoAuto
+                       ns3::DoubleValue (-5.0), ns3::MakeDoubleChecker<double> ());
 
 static ns3::GlobalValue g_numberOfRaPreambles (
     "numberOfRaPreambles",
@@ -197,8 +198,7 @@ static ns3::GlobalValue
 
 static ns3::GlobalValue g_controlFileName ("controlFileName",
                                            "The path to the control file (can be absolute)",
-                                           ns3::StringValue (""),
-                                           ns3::MakeStringChecker ());
+                                           ns3::StringValue (""), ns3::MakeStringChecker ());
 
 int
 main (int argc, char *argv[])
@@ -358,10 +358,10 @@ main (int argc, char *argv[])
   Ptr<MmWavePointToPointEpcHelper> epcHelper = CreateObject<MmWavePointToPointEpcHelper> ();
   mmwaveHelper->SetEpcHelper (epcHelper);
 
-  uint8_t nMmWaveEnbNodes = 4;
-  uint8_t nLteEnbNodes = 1;
-  uint32_t ues = 3;
-  uint8_t nUeNodes = ues * nMmWaveEnbNodes;
+  uint8_t nMmWaveEnbNodes = 2;
+  // uint8_t nLteEnbNodes = 1;
+  uint32_t ues = 1;
+  uint8_t nUeNodes = ues * 2;
 
   NS_LOG_INFO (" Bandwidth " << bandwidth << " centerFrequency " << double (centerFrequency)
                              << " isd " << isd << " numAntennasMcUe " << numAntennasMcUe
@@ -395,12 +395,13 @@ main (int argc, char *argv[])
   // create LTE, mmWave eNB nodes and UE node
   NodeContainer ueNodes;
   NodeContainer mmWaveEnbNodes;
-  NodeContainer lteEnbNodes;
+  // NodeContainer lteEnbNodes;
   NodeContainer allEnbNodes;
+  //
   mmWaveEnbNodes.Create (nMmWaveEnbNodes);
-  lteEnbNodes.Create (nLteEnbNodes);
+  // lteEnbNodes.Create (nLteEnbNodes);
   ueNodes.Create (nUeNodes);
-  allEnbNodes.Add (lteEnbNodes);
+  // allEnbNodes.Add (lteEnbNodes);
   allEnbNodes.Add (mmWaveEnbNodes);
 
   // Position
@@ -410,19 +411,22 @@ main (int argc, char *argv[])
   Ptr<ListPositionAllocator> enbPositionAlloc = CreateObject<ListPositionAllocator> ();
 
   // We want a center with one LTE enb and one mmWave co-located in the same place
-  enbPositionAlloc->Add (centerPosition);
-  enbPositionAlloc->Add (centerPosition);
+  // enbPositionAlloc->Add (centerPosition);
+  // enbPositionAlloc->Add (centerPosition);
 
   double x, y;
   double nConstellation = nMmWaveEnbNodes - 1;
 
+  enbPositionAlloc->Add (Vector (52.486405366824926, 13.40));
+  enbPositionAlloc->Add (Vector (52.486405366824926, 13.45));
+
   // This guarantee that each of the rest BSs is placed at the same distance from the two co-located in the center
-  for (int8_t i = 0; i < nConstellation; ++i)
-    {
-      x = isd * cos ((2 * M_PI * i) / (nConstellation));
-      y = isd * sin ((2 * M_PI * i) / (nConstellation));
-      enbPositionAlloc->Add (Vector (centerPosition.x + x, centerPosition.y + y, 3));
-    }
+  // for (int8_t i = 0; i < nConstellation; ++i)
+  // {
+  // x = isd * cos ((2 * M_PI * i) / (nConstellation));
+  // y = isd * sin ((2 * M_PI * i) / (nConstellation));
+  // enbPositionAlloc->Add (Vector (centerPosition.x + x, centerPosition.y + y, 3));
+  // }
 
   MobilityHelper enbmobility;
   enbmobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -433,8 +437,8 @@ main (int argc, char *argv[])
 
   Ptr<UniformDiscPositionAllocator> uePositionAlloc = CreateObject<UniformDiscPositionAllocator> ();
 
-  uePositionAlloc->SetX (centerPosition.x);
-  uePositionAlloc->SetY (centerPosition.y);
+  uePositionAlloc->SetX (52.486405366824926);
+  uePositionAlloc->SetY (13.40);
   uePositionAlloc->SetRho (isd);
   Ptr<UniformRandomVariable> speed = CreateObject<UniformRandomVariable> ();
   speed->SetAttribute ("Min", DoubleValue (2.0));
