@@ -154,8 +154,9 @@ static ns3::GlobalValue g_e2cuUp ("e2cuUp", "If true, send CU-UP reports", ns3::
 static ns3::GlobalValue g_e2cuCp ("e2cuCp", "If true, send CU-CP reports", ns3::BooleanValue (true),
                                   ns3::MakeBooleanChecker ());
 
-static ns3::GlobalValue g_reducedPmValues ("reducedPmValues", "If true, use a subset of the the pm containers",
-                                        ns3::BooleanValue (true), ns3::MakeBooleanChecker ());
+static ns3::GlobalValue g_reducedPmValues ("reducedPmValues",
+                                           "If true, use a subset of the the pm containers",
+                                           ns3::BooleanValue (true), ns3::MakeBooleanChecker ());
 
 static ns3::GlobalValue
     g_hoSinrDifference ("hoSinrDifference",
@@ -170,10 +171,10 @@ static ns3::GlobalValue
 static ns3::GlobalValue g_simTime ("simTime", "Simulation time in seconds", ns3::DoubleValue (2),
                                    ns3::MakeDoubleChecker<double> (0.1, 100.0));
 
-static ns3::GlobalValue g_outageThreshold ("outageThreshold",
-                                           "SNR threshold for outage events [dB]", // use -1000.0 with NoAuto
-                                           ns3::DoubleValue (-5.0),
-                                           ns3::MakeDoubleChecker<double> ());
+static ns3::GlobalValue
+    g_outageThreshold ("outageThreshold",
+                       "SNR threshold for outage events [dB]", // use -1000.0 with NoAuto
+                       ns3::DoubleValue (-5.0), ns3::MakeDoubleChecker<double> ());
 
 static ns3::GlobalValue g_numberOfRaPreambles (
     "numberOfRaPreambles",
@@ -197,8 +198,7 @@ static ns3::GlobalValue
 
 static ns3::GlobalValue g_controlFileName ("controlFileName",
                                            "The path to the control file (can be absolute)",
-                                           ns3::StringValue (""),
-                                           ns3::MakeStringChecker ());
+                                           ns3::StringValue (""), ns3::MakeStringChecker ());
 
 int
 main (int argc, char *argv[])
